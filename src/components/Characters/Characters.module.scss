@@ -1,0 +1,74 @@
+@use '../../styles/custom-bootstrap' as *;
+
+.section {
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  padding: 5rem 0;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba($dark, 0.55),
+    rgba($dark, 0.85)
+  );
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+}
+
+.carousel {
+  padding-bottom: 3rem; // espaço pras bolinhas não ficarem coladas nos cards
+}
+
+.control {
+  position: absolute;
+  top: 50%;
+  bottom: auto; // cancela o "bottom: 0" que o Bootstrap aplica por padrão
+  width: 48px;
+  height: 48px;
+  transform: translateY(-50%);
+  background-color: rgba($dark, 0.7);
+  border: 1px solid rgba($body-color, 0.3);
+  border-radius: 50%;
+  opacity: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+
+  &:hover {
+    background-color: rgba($primary, 0.85);
+    border-color: $primary;
+  }
+}
+.arrowIcon {
+  font-size: 1.5rem;
+  line-height: 1;
+  color: $body-color;
+}
+
+.indicators {
+  position: static;
+  margin-top: 2rem;
+
+  button {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: rgba($body-color, 0.3);
+    border: none;
+    opacity: 1;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+
+    &.active {
+      background-color: $primary;
+      transform: scale(1.3);
+    }
+  }
+}

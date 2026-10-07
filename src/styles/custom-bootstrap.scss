@@ -1,0 +1,9 @@
+$primary: #8B0000;      // vermelho-sangue
+$dark: #0D0D0D;          // preto-base
+$body-bg: #0D0D0D;
+$body-color: #F2EFE9;    // creme-forense
+$secondary: #3A3A3A;     // cinza-lab
+$font-family-base: 'Oswald', sans-serif;
+
+// importa o Bootstrap depois — ele usa as variáveis acima internamente
+@import 'bootstrap/scss/bootstrap';
