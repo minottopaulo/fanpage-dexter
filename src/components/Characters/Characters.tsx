@@ -1,105 +1,105 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { characters } from '../../data/characters'
 import CharacterCard from '../CharacterCard/CharacterCard'
-import miamiBg from '../../assets/miami.png'
 import styles from './Characters.module.scss'
 
-function getItemsPerView() {
-  if (window.innerWidth >= 992) return 3
-  if (window.innerWidth >= 768) return 2
-  return 1
-}
-
-function chunk<T>(arr: T[], size: number): T[][] {
-  const result: T[][] = []
-  for (let i = 0; i < arr.length; i += size) {
-    result.push(arr.slice(i, i + size))
-  }
-  return result
-}
-
 export default function Characters() {
-  const [itemsPerView, setItemsPerView] = useState(getItemsPerView())
+  const trackRef = useRef<HTMLDivElement>(null)
+  const [page, setPage] = useState(0)
+  const [pages, setPages] = useState(1)
 
-  useEffect(() => {
-    function handleResize() {
-      setItemsPerView(getItemsPerView())
-    }
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
+  // Mede quantos cards cabem na tela e o tamanho de cada "passo" do scroll
+  const measure = useCallback(() => {
+    const track = trackRef.current
+    const first = track?.firstElementChild as HTMLElement | null
+    if (!track || !first) return null
+    const gap = parseFloat(getComputedStyle(track).columnGap) || 0
+    const step = first.offsetWidth + gap
+    const perView = Math.max(1, Math.round((track.clientWidth + gap) / step))
+    return { track, step, perView }
   }, [])
 
-  const slides = chunk(characters, itemsPerView)
+  const update = useCallback(() => {
+    const m = measure()
+    if (!m) return
+    const total = Math.ceil(characters.length / m.perView)
+    const current = Math.round(m.track.scrollLeft / (m.step * m.perView))
+    setPages(total)
+    setPage(Math.min(current, total - 1))
+  }, [measure])
+
+  useEffect(() => {
+    update()
+    window.addEventListener('resize', update)
+    return () => window.removeEventListener('resize', update)
+  }, [update])
+
+  const goTo = (index: number) => {
+    const m = measure()
+    if (!m) return
+    const target = Math.max(0, Math.min(index, pages - 1))
+    m.track.scrollTo({ left: target * m.perView * m.step, behavior: 'smooth' })
+  }
 
   return (
     <section
       id="personagens"
       className={styles.section}
-      style={{ backgroundImage: `url(${miamiBg})` }}
+      aria-labelledby="personagens-titulo"
     >
-      <div className={styles.overlay} />
+      <div className="container">
+        <h2 id="personagens-titulo" className={styles.title}>
+          personagens.
+        </h2>
 
-      <div className={`${styles.content} container`}>
-        <h2 className="fw-bold mb-5 text-center">personagens.</h2>
-
-        {/* arrows ficam FORA do carrossel, numa linha flex própria */}
-        <div className="d-flex align-items-center gap-3">
+        <div className={styles.carousel}>
           <button
-            className={styles.control}
             type="button"
-            data-bs-target="#charactersCarousel"
-            data-bs-slide="prev"
-            aria-label="Anterior"
+            className={styles.arrow}
+            onClick={() => goTo(page - 1)}
+            disabled={page === 0}
+            aria-label="Personagens anteriores"
           >
-            ‹
+            <span aria-hidden="true">‹</span>
           </button>
 
           <div
-            key={itemsPerView}
-            id="charactersCarousel"
-            className={`carousel slide flex-grow-1 ${styles.carousel}`}
+            ref={trackRef}
+            className={styles.track}
+            onScroll={update}
+            role="region"
+            aria-label="Lista de personagens"
+            tabIndex={0}
           >
-            <div className="carousel-inner">
-              {slides.map((group, index) => (
-                <div
-                  key={index}
-                  className={`carousel-item ${index === 0 ? 'active' : ''}`}
-                >
-                  <div className="row g-4 justify-content-center">
-                    {group.map((character) => (
-                      <div key={character.id} className="col-12 col-md-6 col-lg-4">
-                        <CharacterCard character={character} />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className={`carousel-indicators ${styles.indicators}`}>
-              {slides.map((_, index) => (
-                <button
-                  key={index}
-                  type="button"
-                  data-bs-target="#charactersCarousel"
-                  data-bs-slide-to={index}
-                  className={index === 0 ? 'active' : ''}
-                  aria-current={index === 0 ? 'true' : undefined}
-                  aria-label={`Slide ${index + 1}`}
-                />
-              ))}
-            </div>
+            {characters.map((character) => (
+              <div className={styles.slide} key={character.id}>
+                <CharacterCard character={character} />
+              </div>
+            ))}
           </div>
 
           <button
-            className={styles.control}
             type="button"
-            data-bs-target="#charactersCarousel"
-            data-bs-slide="next"
-            aria-label="Próximo"
+            className={styles.arrow}
+            onClick={() => goTo(page + 1)}
+            disabled={page >= pages - 1}
+            aria-label="Próximos personagens"
           >
-            ›
+            <span aria-hidden="true">›</span>
           </button>
+        </div>
+
+        <div className={styles.dots}>
+          {Array.from({ length: pages }, (_, i) => (
+            <button
+              key={i}
+              type="button"
+              className={`${styles.dot} ${i === page ? styles.active : ''}`}
+              onClick={() => goTo(i)}
+              aria-label={`Ir para o grupo ${i + 1}`}
+              aria-current={i === page}
+            />
+          ))}
         </div>
       </div>
     </section>

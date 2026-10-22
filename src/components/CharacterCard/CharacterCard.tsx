@@ -7,18 +7,21 @@ interface CharacterCardProps {
 
 export default function CharacterCard({ character }: CharacterCardProps) {
   return (
-    <div className={`${styles.card} h-100 rounded-4 shadow-sm text-center`}>
-      <div className={`${styles.imageWrap} rounded-4 overflow-hidden mb-3`}>
+    <article className={styles.card}>
+      <div className={styles.imageWrap}>
         <img
           src={character.image}
           alt={character.name}
           className={styles.image}
+          loading="lazy"
         />
       </div>
 
-      <h5 className="fw-bold mb-1">{character.name}</h5>
-      <p className={`${styles.role} mb-2`}>{character.role}</p>
-      <p className={styles.description}>{character.description}</p>
-    </div>
+      <div className={styles.body}>
+        <h3 className={styles.name}>{character.name}</h3>
+        <p className={styles.role}>{character.role}</p>
+        <p className={styles.description}>{character.description}</p>
+      </div>
+    </article>
   )
 }

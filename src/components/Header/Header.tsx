@@ -1,13 +1,11 @@
+import { navLinks } from '../../data/navLinks'
+import styles from './Header.module.scss'
+
 export default function Header() {
   return (
-    <nav
-      className="navbar navbar-expand-lg navbar-dark sticky-top"
-      style={{ backgroundColor: 'rgb(13, 13, 13)', backdropFilter: 'blur(10px)' }}
-    >
+    <nav className={`navbar navbar-expand-lg navbar-dark sticky-top ${styles.header}`}>
       <div className="container">
-        <a className="navbar-brand fw-bold" href="#">
-          dexter.
-        </a>
+        <a className={styles.brand} href="#">dexter.</a>
 
         <button
           className="navbar-toggler"
@@ -22,16 +20,14 @@ export default function Header() {
         </button>
 
         <div className="collapse navbar-collapse" id="navMenu">
-          <ul className="navbar-nav ms-auto gap-4">
-            <li className="nav-item">
-              <a className="nav-link" href="#personagens">personagens</a>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link" href="#temporadas">temporadas</a>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link" href="#sobre">sobre</a>
-            </li>
+          <ul className={`navbar-nav mx-auto gap-lg-4 ${styles.menu}`}>
+            {navLinks.map((link) => (
+              <li className="nav-item" key={link.href}>
+                <a className={`nav-link ${styles.link}`} href={link.href}>
+                  {link.label}
+                </a>
+              </li>
+            ))}
           </ul>
         </div>
       </div>

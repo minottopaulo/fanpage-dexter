@@ -1,6 +1,7 @@
 import Header from "./components/Header/Header";
 import Characters from './components/Characters/Characters'
-import Footer from "./components/Footer/footer";
+import Footer from "./components/Footer/Footer";
+
 function App(){
   return(
     <>

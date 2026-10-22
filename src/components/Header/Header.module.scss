@@ -1,0 +1,27 @@
+@use '../../styles/tokens' as *;
+
+.header {
+  background-color: $primary;
+  padding-block: 1.25rem;
+
+  .menu {
+    --bs-nav-link-color: #{$body-color};
+    --bs-nav-link-hover-color: #fff;
+  }
+}
+
+.brand {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+  color: $body-color;
+  text-decoration: none;
+
+  &:hover {
+    color: #fff;
+  }
+}
+
+.link {
+  font-weight: 700;
+}
